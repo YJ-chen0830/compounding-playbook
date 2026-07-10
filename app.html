@@ -3,66 +3,226 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>The Compounding Playbook · V1</title>
+  <title>Decision Journal · Every Decision Leaves a Trace</title>
   <style>
-    :root { --ink:#17221e; --muted:#66736c; --paper:#f6f4ee; --card:#fffdf8; --line:#d9ded6; --accent:#246a50; --accent-soft:#e1f0e8; --warn:#a75525; }
-    * { box-sizing:border-box } body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Microsoft JhengHei",sans-serif; }
-    header { padding:64px max(24px,calc((100% - 1040px)/2)); background:linear-gradient(135deg,#123b2e,#28694f); color:white; }
-    h1,h2,h3 { line-height:1.25 } h1 { margin:0; font-size:clamp(2.1rem,6vw,4.4rem); letter-spacing:-.04em } h2 { margin:0 0 16px; font-size:1.6rem } h3 { margin:24px 0 8px; font-size:1.05rem } .subtitle { margin:10px 0 0; font-size:1.12rem; opacity:.9 } .quote { max-width:760px; margin:30px 0 0; font-size:1.08rem; border-left:3px solid #b8e5d0; padding-left:18px; }
-    main { max-width:1040px; margin:0 auto; padding:28px 24px 80px; } .nav { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:25px } .nav a,.button { border:1px solid var(--line); border-radius:999px; padding:7px 13px; background:white; color:var(--ink); text-decoration:none; cursor:pointer; font:inherit; font-size:.9rem } .nav a:hover,.button:hover { border-color:var(--accent); color:var(--accent) }
-    section,.card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:28px; margin:18px 0; box-shadow:0 2px 10px #17221e08; } .small { color:var(--muted); font-size:.92rem } .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px } .card { margin:0; padding:20px } .principle { color:var(--accent); font-weight:750 } ul { padding-left:1.3em } li { margin:8px 0 }
-    details { border-top:1px solid var(--line); padding:12px 0 } details:last-child { border-bottom:1px solid var(--line) } summary { cursor:pointer; font-weight:700 } .process { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:18px 0 } .step { background:var(--accent-soft); border-radius:9px; padding:13px; font-weight:700; text-align:center; font-size:.9rem } .step span { display:block; color:var(--muted); font-weight:400; font-size:.8rem; margin-top:4px }
-    form { display:grid; gap:14px } label { display:grid; gap:5px; font-weight:700 } input,textarea,select { width:100%; border:1px solid #bcc8c0; border-radius:8px; padding:10px; font:inherit; background:#fff } textarea { min-height:94px; resize:vertical } .two { display:grid; grid-template-columns:1fr 1fr; gap:14px } .checks { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:9px } .check { display:flex; align-items:flex-start; gap:8px; border:1px solid var(--line); border-radius:8px; padding:10px; font-weight:400; cursor:pointer } .check input { width:auto; margin-top:5px; accent-color:var(--accent) }
-    .actions { display:flex; flex-wrap:wrap; gap:9px; margin-top:4px } .primary { background:var(--accent); color:#fff; border-color:var(--accent) } .primary:hover { color:white; background:#18513c } .danger { color:#8a351a } .records { display:grid; gap:12px; margin-top:18px }.record { border:1px solid var(--line); background:white; border-radius:10px; padding:16px }.record-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start }.tag { display:inline-block; background:var(--accent-soft); color:#18513c; border-radius:999px; padding:2px 9px; font-size:.82rem; font-weight:700 }.score { font-size:.9rem; color:var(--muted) }.empty { color:var(--muted); padding:16px; text-align:center; border:1px dashed var(--line); border-radius:10px }.notice { background:#fff3e7; padding:12px 14px; border-radius:8px; color:#71401f; font-size:.92rem }
-    footer { color:var(--muted); text-align:center; font-size:.85rem; margin-top:34px } @media(max-width:640px){ header{padding:42px 24px}.two{grid-template-columns:1fr}.process{grid-template-columns:1fr}.step{text-align:left}section{padding:20px} }
-    @media print { body{background:#fff;font-size:11pt} header{padding:30px;background:#fff;color:#17221e;border-bottom:2px solid #17221e} main{max-width:none;padding:0} .nav,.actions,.record button,.notice{display:none} section,.card{box-shadow:none;break-inside:avoid;border-color:#bbb;margin:12px 0} .records{display:block}.record{margin:8px 0;break-inside:avoid} }
+    :root{
+      --ink:#2C2C2B; --muted:#7D7A75; --canvas:#FFFFFF; --paper:#F9F8F7; --soft:#F0EFED; --line:#E6E5E3;
+      --blue:#2783DE; --blue-soft:#E5F2FC; --green:#46A171; --green-soft:#E8F1EC; --orange:#D5803B; --orange-soft:#FBEBDE; --red:#E56458; --red-soft:#FCE9E7;
+      --shadow:0 1px 2px rgba(0,0,0,.05),0 8px 24px rgba(0,0,0,.04);
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 ui-sans-serif,system-ui,-apple-system,"Microsoft JhengHei","Noto Sans TC",sans-serif}
+    button,input,textarea,select{font:inherit} a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+    .shell{max-width:1240px;margin:0 auto;padding:24px}.hero{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:18px;align-items:stretch;margin-bottom:18px}
+    .hero-main,.card{background:var(--canvas);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.hero-main{padding:30px;background:linear-gradient(135deg,#fff,#f3f8fc 62%,#e8f1ec)}
+    .eyebrow{font-size:.78rem;letter-spacing:.13em;color:var(--muted);font-weight:900;text-transform:uppercase}.name{margin:8px 0 10px;font-size:clamp(2.1rem,5vw,4.4rem);line-height:.98;letter-spacing:-.055em}.subtitle{max-width:760px;color:var(--muted);font-size:1.05rem;margin:0}.hero-side{padding:20px;display:grid;gap:12px}.kpi{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:12px;border-radius:14px;background:var(--paper);border:1px solid var(--line)}.kpi b{font-size:1.35rem}.kpi span{color:var(--muted);font-size:.88rem}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 390px;gap:18px;align-items:start}.card{padding:20px}.sticky{position:sticky;top:18px}.section-title{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}h2,h3{margin:0;line-height:1.2}h2{font-size:1.35rem}h3{font-size:1rem}.small{color:var(--muted);font-size:.9rem}.badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;font-size:.78rem;font-weight:900;background:var(--blue-soft);color:#155A96;white-space:nowrap}
+    .mode-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.mode{border:1px solid var(--line);background:var(--canvas);border-radius:14px;padding:14px;cursor:pointer;text-align:left;min-height:88px}.mode b{display:block;margin-bottom:4px}.mode span{display:block;color:var(--muted);font-size:.86rem}.mode.active{border-color:#B9D9F3;background:var(--blue-soft);box-shadow:inset 0 0 0 1px #B9D9F3}
+    form{display:grid;gap:16px}.panel{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}.panel summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:900;background:var(--paper);display:flex;justify-content:space-between;gap:12px}.panel summary::-webkit-details-marker{display:none}.panel summary::after{content:'展開';font-size:.82rem;color:var(--muted);font-weight:700}.panel[open] summary{border-bottom:1px solid var(--line)}.panel[open] summary::after{content:'收合'}.panel-body{padding:18px;display:grid;gap:14px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}.span-3{grid-column:span 3}.span-4{grid-column:span 4}.span-5{grid-column:span 5}.span-6{grid-column:span 6}.span-7{grid-column:span 7}.span-8{grid-column:span 8}.span-12{grid-column:span 12}
+    label{display:grid;gap:6px;font-weight:760}.hint{font-weight:400;color:var(--muted);font-size:.82rem}input,select,textarea{width:100%;min-height:46px;border:1px solid #D6D4D0;border-radius:12px;background:#fff;color:var(--ink);padding:11px 12px}textarea{min-height:94px;resize:vertical}input:focus,select:focus,textarea:focus{outline:3px solid var(--blue-soft);border-color:var(--blue)}
+    .choice-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.choice{position:relative}.choice input{position:absolute;opacity:0;pointer-events:none}.choice span{display:flex;align-items:center;justify-content:center;min-height:42px;border:1px solid var(--line);border-radius:12px;background:var(--paper);font-weight:760;cursor:pointer;text-align:center;padding:8px}.choice input:checked+span{background:var(--blue-soft);border-color:#B9D9F3;color:#155A96}.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.check{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:10px;font-weight:520}.check input{width:auto;min-height:0;margin-top:4px;accent-color:var(--blue)}.check:has(input:checked){background:var(--green-soft);border-color:#C8E1D3}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.button{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;min-height:44px;padding:10px 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-weight:760}.button.primary{background:var(--blue);border-color:var(--blue);color:#fff}.button.primary:hover{background:#176DBB}.button.danger{background:var(--red-soft);border-color:#F3C8C3;color:#B23D33}.button.soft{background:var(--paper)}.form-footer{background:#fff;border-top:1px solid var(--line);padding:14px 0 0;margin-top:2px}
+    .score-card{display:grid;gap:14px}.score-ring{height:142px;border-radius:18px;background:conic-gradient(var(--green) calc(var(--score)*1%),var(--soft) 0);display:grid;place-items:center;position:relative}.score-ring::after{content:'';position:absolute;inset:15px;background:#fff;border-radius:14px}.score-ring b{position:relative;z-index:1;font-size:2.4rem}.score-ring span{position:relative;z-index:1;color:var(--muted);font-size:.85rem;display:block;text-align:center}.meter{display:grid;gap:6px}.meter-top{display:flex;justify-content:space-between;font-size:.86rem}.bar{height:9px;background:var(--soft);border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;width:var(--w);background:var(--blue);border-radius:999px}.memo{white-space:pre-wrap;background:#111;color:#F7F7F7;border-radius:14px;padding:16px;font:13px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;max-height:420px;overflow:auto}.warning{background:var(--orange-soft);border:1px solid #F4D4B9;color:#7A421E;border-radius:14px;padding:12px}.records{display:grid;gap:10px;margin-top:14px}.record{border:1px solid var(--line);border-radius:14px;background:#fff;padding:14px}.record-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.tag{display:inline-flex;border-radius:999px;background:var(--blue-soft);color:#155A96;font-size:.78rem;font-weight:900;padding:3px 9px}.empty{text-align:center;color:var(--muted);border:1px dashed #CFCBC6;border-radius:14px;background:var(--paper);padding:18px}.table-wrap{overflow:auto}.data-table{width:100%;border-collapse:separate;border-spacing:0;min-width:760px}.data-table th,.data-table td{text-align:left;border-bottom:1px solid var(--line);padding:10px;font-size:.9rem}.data-table th{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;background:var(--paper)}
+    .review-only,.after-only{display:none} body.mode-review .review-only,body.mode-after .after-only{display:block} body.mode-review .before-label{display:none} body.mode-after .before-label{display:none}
+    @media(max-width:980px){.hero,.layout{grid-template-columns:1fr}.sticky{position:static}.span-3,.span-4,.span-5,.span-6,.span-7,.span-8{grid-column:span 12}.choice-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:560px){.shell{padding:14px}.hero-main,.card{padding:16px}.mode-row{grid-template-columns:1fr}.checks{grid-template-columns:1fr}.choice-grid{grid-template-columns:repeat(2,1fr)}.actions{display:grid}.button{width:100%}.record-top{display:grid}.name{font-size:2.25rem}}
+    @media print{body{background:#fff}.hero-side,.sticky,.actions,.form-footer{display:none!important}.shell{max-width:none;padding:0}.hero,.layout{display:block}.card,.hero-main{box-shadow:none;border-color:#bbb;break-inside:avoid}.panel{break-inside:avoid}.memo{color:#111;background:#fff;border:1px solid #bbb}}
   </style>
 </head>
-<body>
-  <header>
-    <div class="small">VERSION 1.0 · 2026</div>
-    <h1>The Compounding Playbook</h1>
-    <p class="subtitle">《長期複利投資手冊》｜一位工程師的世界模型</p>
-    <p class="quote">真正的投資，不是找到永遠正確的答案，而是不斷修正自己的世界模型，同時避免犯會讓複利中斷的大錯。</p>
-  </header>
-  <main>
-    <nav class="nav"><a href="#thesis">核心信念</a><a href="#framework">世界模型</a><a href="#operating">操作流程</a><a href="#watchlist">研究清單</a><a href="#review">評估紀錄</a><a href="#mistakes">錯誤集</a><a href="#history">演化史</a></nav>
-    <section id="thesis">
-      <h2>V1 的目的</h2>
-      <p>這不是選股答案集，而是一套把「理解世界 → 判斷公司 → 配置資本 → 回顧修正」連成閉環的投資作業系統。V1 的首要任務不是追求完整，而是讓每一次買進、持有、賣出與錯過，都能留下可被未來自己檢驗的證據。</p>
-      <div class="grid"><div class="card"><div class="principle">1. 先看世界，後看股票</div><p>需求是否真實、可持續，供給是否理性，價值最後沉澱在誰手上。</p></div><div class="card"><div class="principle">2. 先看增量，後看靜態</div><p>好的既有資產不等於好投資；新投入資本的報酬、跑道與再投資能力更關鍵。</p></div><div class="card"><div class="principle">3. 系統優先於預測</div><p>承認不確定性；用部位、估值、檢核與復盤，避免單一錯誤中斷複利。</p></div></div>
+<body class="mode-before">
+  <div class="shell">
+    <section class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">Decision Journal</div>
+        <h1 class="name">Every Decision Leaves a Trace</h1>
+        <p class="subtitle">先用 2 分鐘留下最低限度證據；需要時再展開進階分析。這不是股票紀錄，而是你的決策資料集。</p>
+      </div>
+      <aside class="hero-side card">
+        <div class="kpi"><span>決策紀錄</span><b id="kpiCount">0</b></div>
+        <div class="kpi"><span>待複盤項目</span><b id="kpiDue">0</b></div>
+        <div class="kpi"><span>平均品質分數</span><b id="kpiAvg">—</b></div>
+      </aside>
     </section>
-    <section id="framework">
-      <h2>四層世界模型</h2>
-      <details open><summary>Part I · 世界如何運作</summary><ul><li><b>需求：</b>區分真需求、補貼需求與敘事／庫存需求；問「沒有補貼或熱潮時，它還存在嗎？」</li><li><b>供給：</b>辨識理性供給與政治／資本開支驅動的過度供給。</li><li><b>價值沉澱：</b>不要只研究產品或產量；追問客戶願意為何種不可替代性長期付費。</li><li><b>Position：</b>公司在價值鏈的位置，決定它是價格接受者、競爭者，或收租者。</li></ul></details>
-      <details><summary>Part II · 公司如何賺錢</summary><ul><li><b>護城河：</b>網路效應、轉換成本、品牌、生態系、成本曲線與技術／流程位置；每一項都必須能轉化為持久的經濟利潤。</li><li><b>Incremental Economics：</b>新增一元收入與新增一元資本，帶來多少毛利、自由現金流與報酬？這是避免 AT&amp;T 型價值陷阱的核心問題。</li><li><b>Runway：</b>可用高報酬率再投資的年數。品質高但跑道短，複利未必長。</li><li><b>Quality Re-rating：</b>品質被市場重新理解時的重估，是結果而不是投資論點本身；不能用它掩飾基本面惡化。</li></ul></details>
-      <details><summary>Part III · 我如何投資</summary><ul><li><b>能力圈：</b>只在能描述競爭結構、失敗模式與關鍵變數的領域下注。</li><li><b>買進：</b>論點、估值、失效條件與初始部位必須在買前寫下。</li><li><b>持有：</b>讓複利工作；股價上漲不是賣出理由。持續檢查論點、增量經濟與估值。</li><li><b>賣出／換股：</b>論點被推翻、跑道／增量經濟惡化、估值遠超可驗證價值，或出現明顯更佳的機會。每次都問：「若今天沒有持有，我還會買嗎？」</li><li><b>部位與再平衡：</b>用部位管理不確定性；避免 FOMO 與單一敘事主導投資組合。</li></ul></details>
-      <details><summary>Part IV · 案例與反例</summary><p>把每個真實決策還原為：當時相信什麼、證據是什麼、哪裡對／錯、後來發生什麼、今天會怎麼做。候選案例：台積電、環球晶、SUMCO、UNH、Adobe、崑鼎、東京海上、JPM、Visa、PayPal、Synopsys、ASML、AT&amp;T。</p></details>
-    </section>
-    <section id="operating"><h2>投資作業流程</h2><div class="process"><div class="step">觀察<span>變化、問題、機會</span></div><div class="step">建模<span>世界／公司／估值</span></div><div class="step">決策<span>買、持有、賣、觀望</span></div><div class="step">追蹤<span>事實與論點是否分離</span></div><div class="step">復盤<span>修正模型，累積錯誤集</span></div></div><p class="notice">規則：先記錄，再行動。評估表不是用來替決定背書，而是讓未來的自己能公平檢驗今天的判斷。</p></section>
-    <section id="watchlist"><h2>研究／閱讀清單</h2><p class="small">把值得研究的公司、文章、財報或主題放進研究管線。先記下「為何值得花時間」，避免清單最後變成噪音。</p><form id="watchForm"><div class="two"><label>標題／公司／主題<input required name="title" placeholder="例：Adobe · AI 對創意軟體定價權的影響"></label><label>階段<select name="status"><option>追蹤</option><option>研究中</option><option>等待催化</option><option>持有中</option><option>封存</option></select></label></div><div class="two"><label>代號／分類<input name="symbol" placeholder="例：ADBE／軟體／支付"></label><label>下次檢視日<input type="date" name="reviewDate"></label></div><label>為何值得研究<textarea required name="reason" placeholder="它可能改變哪一條世界模型？我想釐清什麼？"></textarea></label><div class="two"><label>來源連結／出處<input name="source" type="url" placeholder="https://…"></label><label>下一步行動<input name="nextAction" placeholder="例：讀 Q2 法說逐字稿，檢查續約率"></label></div><div class="actions"><button class="button primary" type="submit">加入清單</button><button class="button" type="button" id="clearWatchForm">清空表單</button></div></form><h3>清單項目</h3><div class="actions"><button class="button" id="exportWatchCsv">匯出清單（Notion CSV）</button></div><div id="watchRecords" class="records"></div></section>
-    <section id="review"><h2>新增投資評估</h2><p class="small">填寫後按「留存評估」。紀錄保存在本機瀏覽器；請定期匯出備份。</p><form id="reviewForm"><div class="two"><label>公司／標的<input required name="company" placeholder="例：Adobe"></label><label>日期<input required type="date" name="date"></label></div><div class="two"><label>決策<select name="decision"><option>觀望</option><option>買進／加碼</option><option>持有</option><option>減碼／賣出</option><option>換股</option></select></label><label>信心程度（1–5）<select name="confidence"><option value="1">1 · 很低</option><option value="2">2 · 偏低</option><option value="3" selected>3 · 中等</option><option value="4">4 · 高</option><option value="5">5 · 很高</option></select></label></div><label>一句話投資論點<textarea required name="thesis" placeholder="我相信什麼？這個判斷最重要的可驗證事實是什麼？"></textarea></label><div class="two"><label>價值沉澱與競爭位置<textarea name="position" placeholder="價值鏈中誰有定價權？為何？"></textarea></label><label>增量經濟與跑道<textarea name="economics" placeholder="新增資本／收入的報酬？可再投資多久？"></textarea></label></div><label>估值、部位與行動條件<textarea name="valuation" placeholder="價格／估值依據、初始或目標部位、何時執行"></textarea></label><label>論點失效條件（必填）<textarea required name="falsifier" placeholder="哪些具體事實出現時，我必須承認自己錯了？"></textarea></label><div><b>買前／持有檢核</b><div class="checks"><label class="check"><input type="checkbox" name="checks" value="需求經過真實性檢驗">需求不是補貼、庫存或敘事驅動</label><label class="check"><input type="checkbox" name="checks" value="已辨識護城河轉化為經濟利潤">護城河能轉化為經濟利潤</label><label class="check"><input type="checkbox" name="checks" value="增量經濟與跑道可說明">增量經濟與跑道可說明</label><label class="check"><input type="checkbox" name="checks" value="估值與預期報酬可接受">估值與預期報酬可接受</label><label class="check"><input type="checkbox" name="checks" value="已寫下失效條件">已寫下失效條件</label><label class="check"><input type="checkbox" name="checks" value="若未持有仍會買">若今天未持有，我仍會買</label></div></div><label>待驗證問題／下一次檢查日期<textarea name="next" placeholder="例：下次財報後，確認企業客戶續約率與 FCF margin"></textarea></label><div class="actions"><button class="button primary" type="submit">留存評估</button><button class="button" type="button" id="clearForm">清空表單</button></div></form><h3>已留存紀錄</h3><div class="actions"><button class="button" id="exportData">匯出完整備份（JSON）</button><label class="button">匯入備份<input id="importData" type="file" accept="application/json" hidden></label><button class="button" id="printPage">列印／儲存 PDF</button><button class="button danger" id="clearData">清除所有本機紀錄</button></div><div id="records" class="records"></div></section>
-    <section id="mistakes"><h2>Book of Mistakes · 錯誤集</h2><p>錯誤不是污點，而是把直覺升級為模型的原料。每一則錯誤紀錄應回答：我當時怎麼想？忽略了什麼？代價是什麼？以後用哪一條規則避免重犯？可先從「PE 過高而過早賣出台積」、「環球晶與 SUMCO 的分批賣出」、「FOMO」等真實事件開始。</p></section>
-    <section id="history"><h2>世界模型演化史</h2><p>這是版本控制，而非宣言。每次反例推翻一個觀念，就留下「舊模型 → 反例 → 修正 → 新規則」。</p><div class="grid"><div class="card"><b>v1.0 · 建立框架</b><p>價值沉澱、護城河、增量經濟、跑道、品質重估，以及買／持／賣／復盤閉環。</p></div><div class="card"><b>下一版的觸發條件</b><p>當一個案例足以改變規則，而非只改變結論時，新增版本說明與證據。</p></div></div></section>
-    <footer>本頁為個人投資研究與決策紀錄工具，不構成投資建議。© The Compounding Playbook V1</footer>
-  </main>
-  <script>
-    const key='compounding-playbook-v1-reviews'; const watchKey='compounding-playbook-v1-watchlist'; const form=document.querySelector('#reviewForm'); const recordsEl=document.querySelector('#records'); const watchForm=document.querySelector('#watchForm'); const watchRecordsEl=document.querySelector('#watchRecords');
-    const get=()=>JSON.parse(localStorage.getItem(key)||'[]'); const set=x=>localStorage.setItem(key,JSON.stringify(x)); const getWatch=()=>JSON.parse(localStorage.getItem(watchKey)||'[]'); const setWatch=x=>localStorage.setItem(watchKey,JSON.stringify(x));
-    const esc=s=>String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-    function render(){const data=get().sort((a,b)=>b.created-a.created); recordsEl.innerHTML=data.length?data.map(r=>{const checks=Array.isArray(r.checks)&&r.checks.length?'<br><b>已勾選：</b>'+r.checks.map(esc).join('；'):'';return `<article class="record"><div class="record-top"><div><span class="tag">${esc(r.decision)}</span> <b>${esc(r.company)}</b><div class="small">${esc(r.date)} · 信心 ${esc(r.confidence)}/5</div></div><button class="button danger" data-delete="${r.id}">刪除</button></div><p><b>論點：</b>${esc(r.thesis)}</p><p class="small"><b>失效條件：</b>${esc(r.falsifier)}${checks}</p></article>`}).join(''):'<div class="empty">還沒有評估紀錄。從一個正在研究的標的開始。</div>'}
-    function renderWatch(){const data=getWatch().sort((a,b)=>(a.status==='封存')-(b.status==='封存')||b.created-a.created);watchRecordsEl.innerHTML=data.length?data.map(r=>`<article class="record"><div class="record-top"><div><span class="tag">${esc(r.status)}</span> <b>${esc(r.title)}</b><div class="small">${esc(r.symbol||'未分類')}${r.reviewDate?' · 下次檢視 '+esc(r.reviewDate):''}</div></div><button class="button danger" data-watch-delete="${r.id}">刪除</button></div><p>${esc(r.reason)}</p><p class="small">${r.nextAction?'<b>下一步：</b>'+esc(r.nextAction):''}${r.source?'<br><a href="'+esc(r.source)+'" target="_blank" rel="noreferrer">開啟來源</a>':''}</p></article>`).join(''):'<div class="empty">還沒有研究項目。把下一個值得理解的問題放進來。</div>'}
-    form.date.value=new Date().toISOString().slice(0,10); form.addEventListener('submit',e=>{e.preventDefault();const fd=new FormData(form);const x=Object.fromEntries(fd.entries());x.checks=fd.getAll('checks');x.id=crypto.randomUUID();x.created=Date.now();set([...get(),x]);form.reset();form.date.value=new Date().toISOString().slice(0,10);render();});
-    document.querySelector('#clearForm').onclick=()=>{form.reset();form.date.value=new Date().toISOString().slice(0,10)};
-    recordsEl.onclick=e=>{const id=e.target.dataset.delete;if(id&&confirm('刪除這筆評估？')){set(get().filter(x=>x.id!==id));render()}};
-    watchForm.addEventListener('submit',e=>{e.preventDefault();const x=Object.fromEntries(new FormData(watchForm).entries());x.id=crypto.randomUUID();x.created=Date.now();setWatch([...getWatch(),x]);watchForm.reset();renderWatch()});
-    document.querySelector('#clearWatchForm').onclick=()=>watchForm.reset();
-    watchRecordsEl.onclick=e=>{const id=e.target.dataset.watchDelete;if(id&&confirm('刪除這個清單項目？')){setWatch(getWatch().filter(x=>x.id!==id));renderWatch()}};
-    const download=(content,type,name)=>{const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)};
-    document.querySelector('#exportData').onclick=()=>download(JSON.stringify({version:'1.1',exportedAt:new Date().toISOString(),reviews:get(),watchlist:getWatch()},null,2),'application/json','compounding-playbook-v1-backup.json');
-    document.querySelector('#exportWatchCsv').onclick=()=>{const headers=['標題','階段','代號／分類','為何值得研究','來源連結／出處','下一步行動','下次檢視日'];const q=x=>'"'+String(x||'').replaceAll('"','""')+'"';const rows=getWatch().map(r=>[r.title,r.status,r.symbol,r.reason,r.source,r.nextAction,r.reviewDate].map(q).join(','));download('\ufeff'+[headers.map(q).join(','),...rows].join('\n'),'text/csv;charset=utf-8','compounding-playbook-research-list.csv')};
-    document.querySelector('#importData').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());const reviews=Array.isArray(x.reviews)?x.reviews:[];const watchlist=Array.isArray(x.watchlist)?x.watchlist:[];if(!reviews.length&&!watchlist.length)throw Error();if(confirm(`匯入 ${reviews.length} 筆評估與 ${watchlist.length} 筆清單項目？現有內容會保留。`)){set([...get(),...reviews]);setWatch([...getWatch(),...watchlist]);render();renderWatch()}}catch{alert('無法讀取此備份檔。')}e.target.value=''};
-    document.querySelector('#printPage').onclick=()=>window.print(); document.querySelector('#clearData').onclick=()=>{if(confirm('確定清除所有本機紀錄與研究清單？此動作無法復原。')){localStorage.removeItem(key);localStorage.removeItem(watchKey);render();renderWatch()}}; render();renderWatch();
-  </script>
-</body></html>
 
+    <div class="layout">
+      <main class="card">
+        <div class="section-title">
+          <div><h2>New Decision</h2><p class="small">必填欄位刻意很少。先記錄，再補完。</p></div><span class="badge">2-minute capture</span>
+        </div>
+        <div class="mode-row" role="radiogroup" aria-label="決策階段">
+          <button class="mode active" type="button" data-mode="before"><b>Before</b><span>買入、加碼、觀察當下</span></button>
+          <button class="mode" type="button" data-mode="review"><b>Review</b><span>6 或 12 個月後複盤</span></button>
+          <button class="mode" type="button" data-mode="after"><b>After</b><span>賣出或重大調整後</span></button>
+        </div>
+
+        <form id="decisionForm">
+          <input type="hidden" name="stage" value="Before">
+          <details class="panel" open>
+            <summary>Step 1｜最小必填</summary>
+            <div class="panel-body">
+              <div class="grid">
+                <label class="span-4">股票 / 標的
+                  <input required name="stock" placeholder="例：Adobe / ADBE">
+                </label>
+                <label class="span-4">日期
+                  <input required type="date" name="date">
+                </label>
+                <label class="span-4">決策
+                  <select name="decision"><option>新增</option><option>加碼</option><option>減碼</option><option>持有</option><option>賣出</option><option>觀察</option></select>
+                </label>
+                <label class="span-3">價格
+                  <input name="price" inputmode="decimal" placeholder="238">
+                </label>
+                <label class="span-3">幣別
+                  <select name="currency"><option>USD</option><option>TWD</option><option>JPY</option><option>HKD</option><option>EUR</option></select>
+                </label>
+                <label class="span-3">持股比例
+                  <input name="portfolioWeight" placeholder="例：5%">
+                </label>
+                <label class="span-3">下次檢查日
+                  <input type="date" name="nextReviewDate">
+                </label>
+                <label class="span-12">一句話 Thesis
+                  <input required name="thesis" placeholder="例：Adobe 將成為 AI 時代 Enterprise Creative Platform">
+                </label>
+                <label class="span-6">我為什麼現在做這個決策？
+                  <textarea required name="whyNow" placeholder="觸發原因：估值、基本面、世界變化、組合配置……"></textarea>
+                </label>
+                <label class="span-6">如果我錯了，最可能錯在哪？
+                  <textarea required name="falsifier" placeholder="寫下可驗證的失效條件，而不是模糊的擔心。"></textarea>
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <details class="panel">
+            <summary>Step 2｜快速評分</summary>
+            <div class="panel-body">
+              <div class="grid">
+                <label class="span-6">世界模型 / Theme
+                  <input name="worldModel" placeholder="AI、高齡化、電子支付、半導體、能源……">
+                </label>
+                <label class="span-6">Position
+                  <select name="position"><option></option><option>Consumer</option><option>Platform</option><option>Infrastructure</option><option>Tool</option><option>Commodity</option></select>
+                </label>
+                <div class="span-6"><label>Demand Score <span class="hint">需求強度</span></label><div class="choice-grid" data-radio="demand"></div></div>
+                <div class="span-6"><label>Moat Score <span class="hint">護城河強度</span></label><div class="choice-grid" data-radio="moat"></div></div>
+                <div class="span-6"><label>Management Score <span class="hint">資本配置與文化</span></label><div class="choice-grid" data-radio="management"></div></div>
+                <div class="span-6"><label>Valuation Score <span class="hint">越高代表越有安全邊際</span></label><div class="choice-grid" data-radio="valuation"></div></div>
+                <label class="span-6">Runway
+                  <select name="runway"><option></option><option>3 年以內</option><option>5 年</option><option>10 年</option><option>20 年以上</option></select>
+                </label>
+                <label class="span-6">Thesis Completion
+                  <select name="completion"><option value="20">20% · 剛開始</option><option value="40">40% · 初步驗證</option><option value="60">60% · 明顯進展</option><option value="80">80% · 接近完成</option><option value="100">100% · Thesis 完成 / 需要重寫</option></select>
+                </label>
+              </div>
+            </div>
+          </details>
+
+          <details class="panel">
+            <summary>Step 3｜Checklist / Memo</summary>
+            <div class="panel-body">
+              <div class="checks">
+                <label class="check"><input type="checkbox" name="checks" value="需求不是補貼或庫存驅動">需求不是補貼或庫存驅動</label>
+                <label class="check"><input type="checkbox" name="checks" value="護城河能轉成經濟利潤">護城河能轉成經濟利潤</label>
+                <label class="check"><input type="checkbox" name="checks" value="新增收入不需要大量新增資本">新增收入不需要大量新增資本</label>
+                <label class="check"><input type="checkbox" name="checks" value="估值有安全邊際">估值有安全邊際</label>
+                <label class="check"><input type="checkbox" name="checks" value="仍在能力圈內">仍在能力圈內</label>
+                <label class="check"><input type="checkbox" name="checks" value="若未持有今天仍會買">若未持有今天仍會買</label>
+              </div>
+              <label>補充 Memo（選填）
+                <textarea name="notes" placeholder="產業結構、估值假設、風險、管理層、待查資料……"></textarea>
+              </label>
+            </div>
+          </details>
+
+          <details class="panel review-only">
+            <summary>Review｜半年後複盤</summary>
+            <div class="panel-body">
+              <div class="grid">
+                <label class="span-6">哪些假設被驗證？<textarea name="validated"></textarea></label>
+                <label class="span-6">哪些假設開始偏離？<textarea name="drifted"></textarea></label>
+                <label class="span-6">世界變了嗎？<textarea name="worldChanged"></textarea></label>
+                <label class="span-6">我變了���？<textarea name="selfChanged"></textarea></label>
+              </div>
+            </div>
+          </details>
+
+          <details class="panel after-only">
+            <summary>After｜賣出或重大調整</summary>
+            <div class="panel-body">
+              <label>真正原因</label>
+              <div class="checks">
+                <label class="check"><input type="checkbox" name="sellReasons" value="Thesis Broken">Thesis Broken</label>
+                <label class="check"><input type="checkbox" name="sellReasons" value="Better Opportunity">Better Opportunity</label>
+                <label class="check"><input type="checkbox" name="sellReasons" value="Valuation">Valuation</label>
+                <label class="check"><input type="checkbox" name="sellReasons" value="Risk">Risk</label>
+                <label class="check"><input type="checkbox" name="sellReasons" value="Portfolio">Portfolio</label>
+                <label class="check"><input type="checkbox" name="sellReasons" value="Mistake">Mistake</label>
+              </div>
+              <label>Lessons Learned：今天最大的收穫（一句話）
+                <input name="lesson" placeholder="例：我把品質重估誤當成基本面改善。">
+              </label>
+            </div>
+          </details>
+
+          <div class="form-footer actions">
+            <button class="button primary" type="submit">留下決策紀錄</button>
+            <button class="button soft" type="button" id="resetForm">清空</button>
+            <button class="button soft" type="button" id="copyMemo">複製 Memo</button>
+          </div>
+        </form>
+
+        <section style="margin-top:24px">
+          <div class="section-title"><div><h2>Decision History</h2><p class="small">送出後會自動轉入這裡，並儲存在本機瀏覽器。</p></div></div>
+          <div class="actions">
+            <button class="button soft" id="exportCsv" type="button">匯出 CSV</button>
+            <button class="button soft" id="exportJson" type="button">匯出 JSON</button>
+            <label class="button soft">匯入 JSON<input id="importJson" type="file" accept="application/json" hidden></label>
+            <button class="button danger" id="clearAll" type="button">清除全部</button>
+          </div>
+          <div id="records" class="records"></div>
+        </section>
+      </main>
+
+      <aside class="sticky card score-card">
+        <div class="section-title"><div><h2>Live Dashboard</h2><p class="small">右側即時摘要會跟著表單變動。</p></div></div>
+        <div class="score-ring" id="scoreRing" style="--score:0"><div><b id="scoreText">0</b><span>Decision Quality</span></div></div>
+        <div class="meter"><div class="meter-top"><span>Moat</span><b id="moatText">0/5</b></div><div class="bar"><i id="moatBar" style="--w:0%"></i></div></div>
+        <div class="meter"><div class="meter-top"><span>Runway / Completion</span><b id="completionText">20%</b></div><div class="bar"><i id="completionBar" style="--w:20%"></i></div></div>
+        <div class="warning" id="warningBox">先填「一句話 Thesis」與「失效條件」，這是最低限度證據。</div>
+        <h3>Investment Memo Preview</h3>
+        <pre class="memo" id="memoPreview"></pre>
+      </aside>
+    </div>
+  </div>
+
+<script>
+const STORAGE='decision-journal-v2';
+const form=document.querySelector('#decisionForm');
+const recordsEl=document.querySelector('#records');
+const today=new Date().toISOString().slice(0,10); form.date.value=today;
+function defaultReviewDate(){const d=new Date(); d.setMonth(d.getMonth()+6); return d.toISOString().slice(0,10)} form.nextReviewDate.value=defaultReviewDate();
+function esc(s){return String(s||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function get(){return JSON.parse(localStorage.getItem(STORAGE)||'[]')} function set(x){localStorage.setItem(STORAGE,JSON.stringify(x))}
+function buildRadios(){document.querySelectorAll('[data-radio]').forEach(box=>{const name=box.dataset.radio; box.innerHTML=[1,2,3,4,5].map(n=>`<label class="choice"><input type="radio" name="${name}" value="${n}" ${n===3?'checked':''}><span>${n}</span></label>`).join('')})} buildRadios();
+function fd(){const data=new FormData(form); const obj=Object.fromEntries(data.entries()); obj.checks=data.getAll('checks'); obj.sellReasons=data.getAll('sellReasons'); return obj}
+function score(o=fd()){const nums=['demand','moat','management','valuation'].map(k=>Number(o[k]||3)); const base=nums.reduce((a,b)=>a+b,0)/20*70; const required=(o.thesis?8:0)+(o.whyNow?8:0)+(o.falsifier?10:0)+(o.nextReviewDate?4:0); const checks=(o.checks||[]).length*1.5; return Math.min(100,Math.round(base+required+checks))}
+function memo(o=fd()){return `Decision Memo\n\nStage: ${o.stage||'Before'}\nStock: ${o.stock||'—'}\nDate: ${o.date||'—'}\nDecision: ${o.decision||'—'}\nPrice: ${o.price||'—'} ${o.currency||''}\nPortfolio Weight: ${o.portfolioWeight||'—'}\nNext Review: ${o.nextReviewDate||'—'}\n\nOne-line Thesis:\n${o.thesis||'—'}\n\nWhy now:\n${o.whyNow||'—'}\n\nWorld Model / Theme:\n${o.worldModel||'—'}\n\nPosition: ${o.position||'—'}\nDemand: ${o.demand||'—'}/5 · Moat: ${o.moat||'—'}/5 · Management: ${o.management||'—'}/5 · Valuation: ${o.valuation||'—'}/5\nRunway: ${o.runway||'—'} · Thesis Completion: ${o.completion||'20'}%\n\nFalsifier:\n${o.falsifier||'—'}\n\nChecklist:\n${(o.checks&&o.checks.length)?o.checks.map(x=>'□ '+x).join('\n'):'—'}\n\nNotes:\n${o.notes||'—'}${o.stage==='Review'?`\n\nReview:\nValidated: ${o.validated||'—'}\nDrifted: ${o.drifted||'—'}\nWorld changed: ${o.worldChanged||'—'}\nI changed: ${o.selfChanged||'—'}`:''}${o.stage==='After'?`\n\nAfter:\nSell reasons: ${(o.sellReasons&&o.sellReasons.length)?o.sellReasons.join(', '):'—'}\nLesson: ${o.lesson||'—'}`:''}`}
+function updateLive(){const o=fd(), s=score(o); document.querySelector('#scoreRing').style.setProperty('--score',s); document.querySelector('#scoreText').textContent=s; document.querySelector('#moatText').textContent=(o.moat||3)+'/5'; document.querySelector('#moatBar').style.setProperty('--w',(Number(o.moat||3)*20)+'%'); document.querySelector('#completionText').textContent=(o.completion||20)+'%'; document.querySelector('#completionBar').style.setProperty('--w',(o.completion||20)+'%'); document.querySelector('#memoPreview').textContent=memo(o); const missing=[]; if(!o.thesis) missing.push('一句話 Thesis'); if(!o.falsifier) missing.push('失效條件'); if(!o.whyNow) missing.push('為什麼現在做'); document.querySelector('#warningBox').textContent=missing.length?'還缺：'+missing.join('、'):'最低限度證據已完成，可以先送出。'}
+function render(){const rows=get().sort((a,b)=>b.created-a.created); document.querySelector('#kpiCount').textContent=rows.length; const due=rows.filter(r=>r.nextReviewDate&&new Date(r.nextReviewDate)<=new Date()).length; document.querySelector('#kpiDue').textContent=due; document.querySelector('#kpiAvg').textContent=rows.length?Math.round(rows.reduce((a,b)=>a+(b.qualityScore||0),0)/rows.length):'—'; recordsEl.innerHTML=rows.length?`<div class="table-wrap"><table class="data-table"><thead><tr><th>日期</th><th>階段</th><th>股票</th><th>決策</th><th>Thesis</th><th>完成度</th><th>分數</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.date)}</td><td><span class="tag">${esc(r.stage)}</span></td><td><b>${esc(r.stock)}</b></td><td>${esc(r.decision)}</td><td>${esc(r.thesis)}</td><td>${esc(r.completion||'20')}%</td><td>${esc(r.qualityScore)}</td><td><button class="button danger" data-del="${r.id}" type="button">刪除</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">還沒有紀錄。送出第一筆決策後，會自動出現在這裡。</div>'}
+form.addEventListener('input',updateLive); form.addEventListener('change',updateLive);
+document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); const mode=btn.dataset.mode; document.body.className='mode-'+mode; form.stage.value=mode[0].toUpperCase()+mode.slice(1); updateLive()});
+form.onsubmit=e=>{e.preventDefault(); const o=fd(); o.id=crypto.randomUUID(); o.created=Date.now(); o.qualityScore=score(o); o.memo=memo(o); set([...get(),o]); form.reset(); buildRadios(); form.date.value=today; form.nextReviewDate.value=defaultReviewDate(); document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active')); document.querySelector('[data-mode="before"]').classList.add('active'); document.body.className='mode-before'; form.stage.value='Before'; updateLive(); render(); window.location.hash='records'};
+document.querySelector('#resetForm').onclick=()=>{form.reset(); buildRadios(); form.date.value=today; form.nextReviewDate.value=defaultReviewDate(); updateLive()};
+document.querySelector('#copyMemo').onclick=async()=>{await navigator.clipboard.writeText(document.querySelector('#memoPreview').textContent); alert('已複製 Memo')};
+recordsEl.onclick=e=>{const id=e.target.dataset.del; if(id&&confirm('刪除這筆決策紀錄？')){set(get().filter(x=>x.id!==id)); render()}};
+function download(content,type,name){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
+document.querySelector('#exportJson').onclick=()=>download(JSON.stringify({version:'decision-journal-v2',exportedAt:new Date().toISOString(),records:get()},null,2),'application/json','decision-journal-v2.json');
+document.querySelector('#exportCsv').onclick=()=>{const headers=['Stage','Stock','Market','Date','Decision','Price','Currency','Portfolio Weight','Thesis','World Model','Position','Demand','Moat','Management','Valuation','Runway','Thesis Completion','Why Now','Falsifier','Next Review Date','Checks','Sell Reasons','Lesson','Quality Score','Memo']; const q=x=>'"'+String(x??'').replaceAll('"','""')+'"'; const rows=get().map(r=>[r.stage,r.stock,r.market,r.date,r.decision,r.price,r.currency,r.portfolioWeight,r.thesis,r.worldModel,r.position,r.demand,r.moat,r.management,r.valuation,r.runway,r.completion,r.whyNow,r.falsifier,r.nextReviewDate,(r.checks||[]).join('; '),(r.sellReasons||[]).join('; '),r.lesson,r.qualityScore,r.memo].map(q).join(',')); download('\ufeff'+[headers.map(q).join(','),...rows].join('\n'),'text/csv;charset=utf-8','decision-journal-v2.csv')};
+document.querySelector('#importJson').onchange=async e=>{const f=e.target.files[0]; if(!f)return; try{const x=JSON.parse(await f.text()); const records=Array.isArray(x.records)?x.records:[]; if(!records.length)throw Error(); if(confirm(`匯入 ${records.length} 筆紀錄？現有內容會保留。`)){set([...get(),...records]); render()}}catch{alert('無法讀取此 JSON')} e.target.value=''};
+document.querySelector('#clearAll').onclick=()=>{if(confirm('確定清除全部本機紀錄？')){localStorage.removeItem(STORAGE); render()}};
+updateLive(); render();
+</script>
+</body>
+</html>
