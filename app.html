@@ -70,16 +70,22 @@
                 <label class="span-4">決策
                   <select name="decision"><option>新增</option><option>加碼</option><option>減碼</option><option>持有</option><option>賣出</option><option>觀察</option></select>
                 </label>
-                <label class="span-3">價格
+                <label class="span-3">成交價格
                   <input name="price" inputmode="decimal" placeholder="238">
+                </label>
+                <label class="span-3">股數
+                  <input name="shares" inputmode="decimal" placeholder="例：10">
                 </label>
                 <label class="span-3">幣別
                   <select name="currency"><option>USD</option><option>TWD</option><option>JPY</option><option>HKD</option><option>EUR</option></select>
                 </label>
-                <label class="span-3">持股比例
-                  <input name="portfolioWeight" placeholder="例：5%">
+                <label class="span-3">交易金額（自動）
+                  <input name="transactionAmount" readonly placeholder="股數 × 價格">
                 </label>
-                <label class="span-3">下次檢查日
+                <label class="span-6">持股比例（選填）
+                  <input name="portfolioWeight" placeholder="例：5%，可之後再補">
+                </label>
+                <label class="span-6">下次檢查日
                   <input type="date" name="nextReviewDate">
                 </label>
                 <label class="span-12">一句話 Thesis
@@ -208,10 +214,11 @@ function get(){return JSON.parse(localStorage.getItem(STORAGE)||'[]')} function 
 function buildRadios(){document.querySelectorAll('[data-radio]').forEach(box=>{const name=box.dataset.radio; box.innerHTML=[1,2,3,4,5].map(n=>`<label class="choice"><input type="radio" name="${name}" value="${n}" ${n===3?'checked':''}><span>${n}</span></label>`).join('')})} buildRadios();
 function fd(){const data=new FormData(form); const obj=Object.fromEntries(data.entries()); obj.checks=data.getAll('checks'); obj.sellReasons=data.getAll('sellReasons'); return obj}
 function score(o=fd()){const nums=['demand','moat','management','valuation'].map(k=>Number(o[k]||3)); const base=nums.reduce((a,b)=>a+b,0)/20*70; const required=(o.thesis?8:0)+(o.whyNow?8:0)+(o.falsifier?10:0)+(o.nextReviewDate?4:0); const checks=(o.checks||[]).length*1.5; return Math.min(100,Math.round(base+required+checks))}
-function memo(o=fd()){return `Decision Memo\n\nStage: ${o.stage||'Before'}\nStock: ${o.stock||'—'}\nDate: ${o.date||'—'}\nDecision: ${o.decision||'—'}\nPrice: ${o.price||'—'} ${o.currency||''}\nPortfolio Weight: ${o.portfolioWeight||'—'}\nNext Review: ${o.nextReviewDate||'—'}\n\nOne-line Thesis:\n${o.thesis||'—'}\n\nWhy now:\n${o.whyNow||'—'}\n\nWorld Model / Theme:\n${o.worldModel||'—'}\n\nPosition: ${o.position||'—'}\nDemand: ${o.demand||'—'}/5 · Moat: ${o.moat||'—'}/5 · Management: ${o.management||'—'}/5 · Valuation: ${o.valuation||'—'}/5\nRunway: ${o.runway||'—'} · Thesis Completion: ${o.completion||'20'}%\n\nFalsifier:\n${o.falsifier||'—'}\n\nChecklist:\n${(o.checks&&o.checks.length)?o.checks.map(x=>'□ '+x).join('\n'):'—'}\n\nNotes:\n${o.notes||'—'}${o.stage==='Review'?`\n\nReview:\nValidated: ${o.validated||'—'}\nDrifted: ${o.drifted||'—'}\nWorld changed: ${o.worldChanged||'—'}\nI changed: ${o.selfChanged||'—'}`:''}${o.stage==='After'?`\n\nAfter:\nSell reasons: ${(o.sellReasons&&o.sellReasons.length)?o.sellReasons.join(', '):'—'}\nLesson: ${o.lesson||'—'}`:''}`}
+function memo(o=fd()){return `Decision Memo\n\nStage: ${o.stage||'Before'}\nStock: ${o.stock||'—'}\nDate: ${o.date||'—'}\nDecision: ${o.decision||'—'}\nPrice: ${o.price||'—'} ${o.currency||''}\nShares: ${o.shares||'—'}\nTransaction Amount: ${o.transactionAmount||'—'} ${o.currency||''}\nPortfolio Weight (optional): ${o.portfolioWeight||'—'}\nNext Review: ${o.nextReviewDate||'—'}\n\nOne-line Thesis:\n${o.thesis||'—'}\n\nWhy now:\n${o.whyNow||'—'}\n\nWorld Model / Theme:\n${o.worldModel||'—'}\n\nPosition: ${o.position||'—'}\nDemand: ${o.demand||'—'}/5 · Moat: ${o.moat||'—'}/5 · Management: ${o.management||'—'}/5 · Valuation: ${o.valuation||'—'}/5\nRunway: ${o.runway||'—'} · Thesis Completion: ${o.completion||'20'}%\n\nFalsifier:\n${o.falsifier||'—'}\n\nChecklist:\n${(o.checks&&o.checks.length)?o.checks.map(x=>'□ '+x).join('\n'):'—'}\n\nNotes:\n${o.notes||'—'}${o.stage==='Review'?`\n\nReview:\nValidated: ${o.validated||'—'}\nDrifted: ${o.drifted||'—'}\nWorld changed: ${o.worldChanged||'—'}\nI changed: ${o.selfChanged||'—'}`:''}${o.stage==='After'?`\n\nAfter:\nSell reasons: ${(o.sellReasons&&o.sellReasons.length)?o.sellReasons.join(', '):'—'}\nLesson: ${o.lesson||'—'}`:''}`}
 function updateLive(){const o=fd(), s=score(o); document.querySelector('#scoreRing').style.setProperty('--score',s); document.querySelector('#scoreText').textContent=s; document.querySelector('#moatText').textContent=(o.moat||3)+'/5'; document.querySelector('#moatBar').style.setProperty('--w',(Number(o.moat||3)*20)+'%'); document.querySelector('#completionText').textContent=(o.completion||20)+'%'; document.querySelector('#completionBar').style.setProperty('--w',(o.completion||20)+'%'); document.querySelector('#memoPreview').textContent=memo(o); const missing=[]; if(!o.thesis) missing.push('一句話 Thesis'); if(!o.falsifier) missing.push('失效條件'); if(!o.whyNow) missing.push('為什麼現在做'); document.querySelector('#warningBox').textContent=missing.length?'還缺：'+missing.join('、'):'最低限度證據已完成，可以先送出。'}
-function render(){const rows=get().sort((a,b)=>b.created-a.created); document.querySelector('#kpiCount').textContent=rows.length; const due=rows.filter(r=>r.nextReviewDate&&new Date(r.nextReviewDate)<=new Date()).length; document.querySelector('#kpiDue').textContent=due; document.querySelector('#kpiAvg').textContent=rows.length?Math.round(rows.reduce((a,b)=>a+(b.qualityScore||0),0)/rows.length):'—'; recordsEl.innerHTML=rows.length?`<div class="table-wrap"><table class="data-table"><thead><tr><th>日期</th><th>階段</th><th>股票</th><th>決策</th><th>Thesis</th><th>完成度</th><th>分數</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.date)}</td><td><span class="tag">${esc(r.stage)}</span></td><td><b>${esc(r.stock)}</b></td><td>${esc(r.decision)}</td><td>${esc(r.thesis)}</td><td>${esc(r.completion||'20')}%</td><td>${esc(r.qualityScore)}</td><td><button class="button danger" data-del="${r.id}" type="button">刪除</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">還沒有紀錄。送出第一筆決策後，會自動出現在這裡。</div>'}
-form.addEventListener('input',updateLive); form.addEventListener('change',updateLive);
+function updateAmount(){const p=Number(String(form.price.value||'').replace(/,/g,'')); const sh=Number(String(form.shares.value||'').replace(/,/g,'')); form.transactionAmount.value=(p&&sh)?(p*sh).toLocaleString(undefined,{maximumFractionDigits:2}):''}
+function render(){const rows=get().sort((a,b)=>b.created-a.created); document.querySelector('#kpiCount').textContent=rows.length; const due=rows.filter(r=>r.nextReviewDate&&new Date(r.nextReviewDate)<=new Date()).length; document.querySelector('#kpiDue').textContent=due; document.querySelector('#kpiAvg').textContent=rows.length?Math.round(rows.reduce((a,b)=>a+(b.qualityScore||0),0)/rows.length):'—'; recordsEl.innerHTML=rows.length?`<div class="table-wrap"><table class="data-table"><thead><tr><th>日期</th><th>階段</th><th>股票</th><th>決策</th><th>股數</th><th>金額</th><th>Thesis</th><th>完成度</th><th>分數</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(r.date)}</td><td><span class="tag">${esc(r.stage)}</span></td><td><b>${esc(r.stock)}</b></td><td>${esc(r.decision)}</td><td>${esc(r.shares||'—')}</td><td>${esc(r.transactionAmount||'—')} ${esc(r.currency||'')}</td><td>${esc(r.thesis)}</td><td>${esc(r.completion||'20')}%</td><td>${esc(r.qualityScore)}</td><td><button class="button danger" data-del="${r.id}" type="button">刪除</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">還沒有紀錄。送出第一筆決策後，會自動出現在這裡。</div>'}
+form.addEventListener('input',()=>{updateAmount();updateLive()}); form.addEventListener('change',()=>{updateAmount();updateLive()});
 document.querySelectorAll('.mode').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));btn.classList.add('active'); const mode=btn.dataset.mode; document.body.className='mode-'+mode; form.stage.value=mode[0].toUpperCase()+mode.slice(1); updateLive()});
 form.onsubmit=e=>{e.preventDefault(); const o=fd(); o.id=crypto.randomUUID(); o.created=Date.now(); o.qualityScore=score(o); o.memo=memo(o); set([...get(),o]); form.reset(); buildRadios(); form.date.value=today; form.nextReviewDate.value=defaultReviewDate(); document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active')); document.querySelector('[data-mode="before"]').classList.add('active'); document.body.className='mode-before'; form.stage.value='Before'; updateLive(); render(); window.location.hash='records'};
 document.querySelector('#resetForm').onclick=()=>{form.reset(); buildRadios(); form.date.value=today; form.nextReviewDate.value=defaultReviewDate(); updateLive()};
@@ -219,66 +226,10 @@ document.querySelector('#copyMemo').onclick=async()=>{await navigator.clipboard.
 recordsEl.onclick=e=>{const id=e.target.dataset.del; if(id&&confirm('刪除這筆決策紀錄？')){set(get().filter(x=>x.id!==id)); render()}};
 function download(content,type,name){const blob=new Blob([content],{type});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href)}
 document.querySelector('#exportJson').onclick=()=>download(JSON.stringify({version:'decision-journal-v2',exportedAt:new Date().toISOString(),records:get()},null,2),'application/json','decision-journal-v2.json');
-document.querySelector('#exportCsv').onclick=()=>{const headers=['Stage','Stock','Market','Date','Decision','Price','Currency','Portfolio Weight','Thesis','World Model','Position','Demand','Moat','Management','Valuation','Runway','Thesis Completion','Why Now','Falsifier','Next Review Date','Checks','Sell Reasons','Lesson','Quality Score','Memo']; const q=x=>'"'+String(x??'').replaceAll('"','""')+'"'; const rows=get().map(r=>[r.stage,r.stock,r.market,r.date,r.decision,r.price,r.currency,r.portfolioWeight,r.thesis,r.worldModel,r.position,r.demand,r.moat,r.management,r.valuation,r.runway,r.completion,r.whyNow,r.falsifier,r.nextReviewDate,(r.checks||[]).join('; '),(r.sellReasons||[]).join('; '),r.lesson,r.qualityScore,r.memo].map(q).join(',')); download('\ufeff'+[headers.map(q).join(','),...rows].join('\n'),'text/csv;charset=utf-8','decision-journal-v2.csv')};
+document.querySelector('#exportCsv').onclick=()=>{const headers=['Stage','Stock','Market','Date','Decision','Price','Shares','Currency','Transaction Amount','Portfolio Weight','Thesis','World Model','Position','Demand','Moat','Management','Valuation','Runway','Thesis Completion','Why Now','Falsifier','Next Review Date','Checks','Sell Reasons','Lesson','Quality Score','Memo']; const q=x=>'"'+String(x??'').replaceAll('"','""')+'"'; const rows=get().map(r=>[r.stage,r.stock,r.market,r.date,r.decision,r.price,r.shares,r.currency,r.transactionAmount,r.portfolioWeight,r.thesis,r.worldModel,r.position,r.demand,r.moat,r.management,r.valuation,r.runway,r.completion,r.whyNow,r.falsifier,r.nextReviewDate,(r.checks||[]).join('; '),(r.sellReasons||[]).join('; '),r.lesson,r.qualityScore,r.memo].map(q).join(',')); download('\ufeff'+[headers.map(q).join(','),...rows].join('\n'),'text/csv;charset=utf-8','decision-journal-v2.csv')};
 document.querySelector('#importJson').onchange=async e=>{const f=e.target.files[0]; if(!f)return; try{const x=JSON.parse(await f.text()); const records=Array.isArray(x.records)?x.records:[]; if(!records.length)throw Error(); if(confirm(`匯入 ${records.length} 筆紀錄？現有內容會保留。`)){set([...get(),...records]); render()}}catch{alert('無法讀取此 JSON')} e.target.value=''};
 document.querySelector('#clearAll').onclick=()=>{if(confirm('確定清除全部本機紀錄？')){localStorage.removeItem(STORAGE); render()}};
 updateLive(); render();
 </script>
-
-<script>
-(() => {
-  const MAKE_WEBHOOK_KEY='decision-journal-make-webhook-v1';
-  const NOTION_DB_URL='https://app.notion.com/p/77c09423b6f54b448e65c6dd54c2d453';
-  const NOTION_DATA_SOURCE='5791a113-e4e6-4e4a-98ba-a427c2f6e5be';
-  const footer=document.querySelector('.form-footer.actions');
-  const status=document.createElement('span');
-  status.className='small';
-  status.style.marginLeft='4px';
-  const config=document.createElement('button');
-  config.type='button'; config.className='button soft'; config.textContent='設定 Make 同步';
-  const resend=document.createElement('button');
-  resend.type='button'; resend.className='button soft'; resend.textContent='重送未同步';
-  const notion=document.createElement('a');
-  notion.className='button soft'; notion.href=NOTION_DB_URL; notion.target='_blank'; notion.rel='noreferrer'; notion.textContent='開啟 Notion Journal';
-  footer.append(config,resend,notion,status);
-  const webhook=()=>localStorage.getItem(MAKE_WEBHOOK_KEY)||'';
-  function setStatus(text){status.textContent=text}
-  function updateRecord(id, patch){const rows=get().map(r=>r.id===id?{...r,...patch}:r);set(rows);render()}
-  async function sendToMake(record){
-    const url=webhook();
-    if(!url){updateRecord(record.id,{syncState:'本機留存（Webhook 未設定）'});setStatus('Webhook 未設定：本機已留存');return}
-    updateRecord(record.id,{syncState:'送往 Make 中…'});
-    try{
-      await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-        source:'Decision Journal Dashboard',
-        schema_version:'1.0',
-        notion_data_source:NOTION_DATA_SOURCE,
-        decision_id:record.id,
-        record
-      })});
-      updateRecord(record.id,{syncState:'已送往 Make',syncAt:new Date().toISOString()});
-      setStatus('已送往 Make；Notion 將由情境建立');
-    }catch(err){
-      updateRecord(record.id,{syncState:'待重送'});
-      setStatus('傳送失敗：仍安全留在本機');
-    }
-  }
-  config.onclick=()=>{
-    const value=prompt('貼上 Make Custom Webhook URL（此網址只會儲存在此裝置）：',webhook());
-    if(value!==null){localStorage.setItem(MAKE_WEBHOOK_KEY,value.trim());setStatus(value.trim()?'Webhook 已設定':'Webhook 未設定')}
-  };
-  resend.onclick=()=>{const rows=get().filter(r=>r.syncState!=='已送往 Make');if(!rows.length){setStatus('沒有待同步紀錄');return}rows.forEach(sendToMake)};
-  form.onsubmit=e=>{
-    e.preventDefault();
-    const o=fd(); o.id=crypto.randomUUID(); o.created=Date.now(); o.qualityScore=score(o); o.memo=memo(o); o.syncState='本機留存';
-    set([...get(),o]);
-    form.reset(); buildRadios(); form.date.value=today; form.nextReviewDate.value=defaultReviewDate();
-    document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));
-    document.querySelector('[data-mode="before"]').classList.add('active'); document.body.className='mode-before'; form.stage.value='Before';
-    updateLive(); render(); window.location.hash='records'; sendToMake(o);
-  };
-  setStatus(webhook()?'Make 同步已設定':'本機模式：請設定 Make Webhook');
-})();
-</script>
-</body>
+<script>(()=>{const K='decision-journal-make-webhook-v1',D='5791a113-e4e6-4e4a-98ba-a427c2f6e5be',F=document.querySelector('.form-footer.actions'),S=document.createElement('span'),B=document.createElement('button'),R=document.createElement('button'),N=document.createElement('a');S.className='small';B.className=R.className=N.className='button soft';B.type=R.type='button';B.textContent='設定 Make 同步';R.textContent='重送未同步';N.textContent='開啟 Notion Journal';N.href='https://app.notion.com/p/77c09423b6f54b448e65c6dd54c2d453';N.target='_blank';F.append(B,R,N,S);const url=()=>localStorage.getItem(K)||'',upd=(id,p)=>{set(get().map(x=>x.id===id?{...x,...p}:x));render()},send=async o=>{if(!url()){upd(o.id,{syncState:'本機留存（Webhook 未設定）'});S.textContent='Webhook 未設定：本機已留存';return}upd(o.id,{syncState:'送往 Make 中…'});try{await fetch(url(),{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'Decision Journal Dashboard',notion_data_source:D,decision_id:o.id,record:o})});upd(o.id,{syncState:'已送往 Make',syncAt:new Date().toISOString()});S.textContent='已送往 Make'}catch(e){upd(o.id,{syncState:'待重送'});S.textContent='傳送失敗：仍在本機'}};B.onclick=()=>{const v=prompt('貼上 Make Custom Webhook URL：',url());if(v!==null){localStorage.setItem(K,v.trim());S.textContent=v.trim()?'Webhook 已設定':'Webhook 未設定'}};R.onclick=()=>get().filter(x=>x.syncState!=='已送往 Make').forEach(send);form.onsubmit=e=>{e.preventDefault();const o=fd();o.id=crypto.randomUUID();o.created=Date.now();o.qualityScore=score(o);o.memo=memo(o);o.syncState='本機留存';set([...get(),o]);form.reset();buildRadios();form.date.value=today;form.nextReviewDate.value=defaultReviewDate();document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));document.querySelector('[data-mode="before"]').classList.add('active');document.body.className='mode-before';form.stage.value='Before';updateLive();render();window.location.hash='records';send(o)};S.textContent=url()?'Make 同步已設定':'本機模式：請設定 Make Webhook'})();</script></body>
 </html>
