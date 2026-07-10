@@ -224,5 +224,61 @@ document.querySelector('#importJson').onchange=async e=>{const f=e.target.files[
 document.querySelector('#clearAll').onclick=()=>{if(confirm('確定清除全部本機紀錄？')){localStorage.removeItem(STORAGE); render()}};
 updateLive(); render();
 </script>
+
+<script>
+(() => {
+  const MAKE_WEBHOOK_KEY='decision-journal-make-webhook-v1';
+  const NOTION_DB_URL='https://app.notion.com/p/77c09423b6f54b448e65c6dd54c2d453';
+  const NOTION_DATA_SOURCE='5791a113-e4e6-4e4a-98ba-a427c2f6e5be';
+  const footer=document.querySelector('.form-footer.actions');
+  const status=document.createElement('span');
+  status.className='small';
+  status.style.marginLeft='4px';
+  const config=document.createElement('button');
+  config.type='button'; config.className='button soft'; config.textContent='設定 Make 同步';
+  const resend=document.createElement('button');
+  resend.type='button'; resend.className='button soft'; resend.textContent='重送未同步';
+  const notion=document.createElement('a');
+  notion.className='button soft'; notion.href=NOTION_DB_URL; notion.target='_blank'; notion.rel='noreferrer'; notion.textContent='開啟 Notion Journal';
+  footer.append(config,resend,notion,status);
+  const webhook=()=>localStorage.getItem(MAKE_WEBHOOK_KEY)||'';
+  function setStatus(text){status.textContent=text}
+  function updateRecord(id, patch){const rows=get().map(r=>r.id===id?{...r,...patch}:r);set(rows);render()}
+  async function sendToMake(record){
+    const url=webhook();
+    if(!url){updateRecord(record.id,{syncState:'本機留存（Webhook 未設定）'});setStatus('Webhook 未設定：本機已留存');return}
+    updateRecord(record.id,{syncState:'送往 Make 中…'});
+    try{
+      await fetch(url,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        source:'Decision Journal Dashboard',
+        schema_version:'1.0',
+        notion_data_source:NOTION_DATA_SOURCE,
+        decision_id:record.id,
+        record
+      })});
+      updateRecord(record.id,{syncState:'已送往 Make',syncAt:new Date().toISOString()});
+      setStatus('已送往 Make；Notion 將由情境建立');
+    }catch(err){
+      updateRecord(record.id,{syncState:'待重送'});
+      setStatus('傳送失敗：仍安全留在本機');
+    }
+  }
+  config.onclick=()=>{
+    const value=prompt('貼上 Make Custom Webhook URL（此網址只會儲存在此裝置）：',webhook());
+    if(value!==null){localStorage.setItem(MAKE_WEBHOOK_KEY,value.trim());setStatus(value.trim()?'Webhook 已設定':'Webhook 未設定')}
+  };
+  resend.onclick=()=>{const rows=get().filter(r=>r.syncState!=='已送往 Make');if(!rows.length){setStatus('沒有待同步紀錄');return}rows.forEach(sendToMake)};
+  form.onsubmit=e=>{
+    e.preventDefault();
+    const o=fd(); o.id=crypto.randomUUID(); o.created=Date.now(); o.qualityScore=score(o); o.memo=memo(o); o.syncState='本機留存';
+    set([...get(),o]);
+    form.reset(); buildRadios(); form.date.value=today; form.nextReviewDate.value=defaultReviewDate();
+    document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));
+    document.querySelector('[data-mode="before"]').classList.add('active'); document.body.className='mode-before'; form.stage.value='Before';
+    updateLive(); render(); window.location.hash='records'; sendToMake(o);
+  };
+  setStatus(webhook()?'Make 同步已設定':'本機模式：請設定 Make Webhook');
+})();
+</script>
 </body>
 </html>
